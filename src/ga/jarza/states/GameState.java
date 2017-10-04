@@ -1,44 +1,31 @@
 package ga.jarza.states;
 
-import ga.jarza.main.Main;
-import ga.jarza.world.entities.Entity;
-import ga.jarza.world.entities.MenuItem;
+import ga.jarza.world.World;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
-public class MenuState extends BasicGameState{
+public class GameState extends BasicGameState{
 
   private int ID;
-  private List<Entity> e = new ArrayList<Entity>();
+  private World w;
 
-  public MenuState(int id){
+  public GameState(int id){
     this.ID = id;
   }
 
   public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
-    gc.setVSync(true);
-    gc.setTargetFrameRate(60);
-    e.add(new MenuItem(132, 38, "play", () -> sbg.enterState(Main.ingame)));
-    e.add(new MenuItem(132, 128, "exit", () -> System.exit(0)));
+    w = new World();
   }
 
   public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
-    for(Entity w : e) {
-      w.render(g);
-    }
+    w.render(g);
   }
 
   public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
-    for(Entity w : e) {
-      w.update(delta, null);
-    }
+    w.update(delta);
   }
 
   public int getID() {

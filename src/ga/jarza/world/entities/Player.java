@@ -1,6 +1,7 @@
 package ga.jarza.world.entities;
 
 import ga.jarza.main.Main;
+import ga.jarza.world.World;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.Color;
@@ -17,7 +18,7 @@ public class Player extends Entity{
     y = 32f;
   }
 
-  public void update(int delta) {
+  public void update(int delta, World world) {
     if(Keyboard.isKeyDown(Input.KEY_W)){
       yv -= ac;
     }

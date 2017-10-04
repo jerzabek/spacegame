@@ -17,7 +17,7 @@ public class World {
 
   public void update(int delta) {
     for(Entity a : e){
-      a.update(delta);
+      a.update(delta, this);
     }
   }
 
@@ -25,6 +25,7 @@ public class World {
     for(Entity a : e){
       a.render(g);
     }
+
   }
 
 }

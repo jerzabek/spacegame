@@ -1,5 +1,6 @@
 package ga.jarza.main;
 
+import ga.jarza.states.GameState;
 import ga.jarza.states.MenuState;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
@@ -21,7 +22,7 @@ public class Main extends StateBasedGame {
 
     // INITIALIZE STATES IN HERE
     this.addState(new MenuState(menu));
-    //    this.addState(new Game(ingame));
+    this.addState(new GameState(ingame));
   }
 
   public static void main(String[] args) {
@@ -58,7 +59,7 @@ public class Main extends StateBasedGame {
 
   public void initStatesList(GameContainer gc) throws SlickException {
     this.getState(menu).init(gc, this);
-//    this.getState(ingame).init(gc, this);
+    this.getState(ingame).init(gc, this);
 
     this.enterState(menu);
   }
