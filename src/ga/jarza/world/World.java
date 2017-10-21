@@ -1,8 +1,18 @@
 package ga.jarza.world;
 
+import ga.jarza.enemies.BasicCuck;
+import ga.jarza.states.GameState;
 import ga.jarza.world.entities.Entity;
+import ga.jarza.world.entities.HealthyEnemy;
+import ga.jarza.world.entities.HealthyEntity;
 import ga.jarza.world.entities.Player;
+import ga.jarza.world.entities.attack.Attack;
+import ga.jarza.world.entities.attack.Attacks;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Rectangle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,15 +20,47 @@ import java.util.List;
 public class World {
 
   private List<Entity> e = new ArrayList<Entity>();
+  public GameState bs;
+  public boolean debug ;
+  public SpriteSheet s, buls;
+  public Attacks attacks;
 
-  public World() {
-    e.add(new Player());
+  public World(GameState state) {
+    attacks = new Attacks();
+    e.add(new Player(this));
+    for(int i = 0; i < 10; i++){
+      e.add(new BasicCuck(this));
+    }
+    try {
+      s = new SpriteSheet(new Image("res/cross.png", false, Image.FILTER_LINEAR), 36, 60);
+      buls = new SpriteSheet(new Image("res/bullets.png", false, Image.FILTER_LINEAR), 18, 9);
+    } catch (SlickException e1) {
+      e1.printStackTrace();
+    }
+    bs = state;
   }
 
   public void update(int delta) {
     for(Entity a : e){
-      a.update(delta, this);
+      a.update(delta);
     }
+
+    e.removeIf(entity -> {
+      boolean res = false;
+      if(!entity.getClass().getName().equals(Player.class.getName())) {
+        if (entity.getClass().getSuperclass().getName().equals(HealthyEntity.class.getName())) {
+          res = ((HealthyEntity) entity).dead;
+//          System.out.println("fag 1");
+        } else if (entity.getClass().getSuperclass().getName().equals(HealthyEnemy.class.getName())) {
+          res = ((HealthyEnemy) entity).dead;
+//          System.out.println("fag 2" + res);
+        }
+      }
+//      System.out.println(entity.getClass().getName() + " & " + HealthyEnemy.class.getClass().getName());
+      return res;
+    });
+//    e.removeIf(entity -> collisinCheck(entity) != null );
+//    System.gc();
   }
 
   public void render(Graphics g) {
@@ -28,4 +70,12 @@ public class World {
 
   }
 
+  public Entity collisinCheck(Entity en) {
+    Entity res = null;
+    for(Entity ent : e)
+      if(!ent.equals(en) && !en.getClass().getName().equals(Player.class.getName()) && ent.getClass().getName().equals(BasicCuck.class.getName()) && new Rectangle(ent.x, ent.y, ent.width, ent.height).intersects(new Rectangle(en.x, en.y, en.width, en.height)))
+        res = ent;
+
+    return res;
+  }
 }

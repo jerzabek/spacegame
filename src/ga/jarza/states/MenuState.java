@@ -37,7 +37,7 @@ public class MenuState extends BasicGameState{
 
   public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
     for(Entity w : e) {
-      w.update(delta, null);
+      w.update(delta);
     }
   }
 

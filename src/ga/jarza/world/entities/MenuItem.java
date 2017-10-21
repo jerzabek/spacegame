@@ -19,6 +19,7 @@ public class MenuItem extends Entity{
   private Runnable r;
 
   public MenuItem(float x, float y, String imgname, Runnable r){
+    super(null);
     this.x = x;
     this.y = y;
     this.r = r;
@@ -37,7 +38,7 @@ public class MenuItem extends Entity{
     sca = 1f;
   }
 
-  public void update(int delta, World world) {
+  public void update(int delta) {
     if(new Rectangle(x, y, w, h).contains(new Point(Mouse.getX(), Main.getGAME_HEIGHT() - Mouse.getY()))){
       sca += ac*delta;
       if(Mouse.isButtonDown(0) && !prev){
@@ -57,9 +58,10 @@ public class MenuItem extends Entity{
   }
 
   public void render(Graphics g) {
+
     g.drawImage(i, x-((w*sca)-w)/2, y-((h*sca)-h)/2, x+w*sca, y+h*sca, 0f, 0f, w, h);
     if(sca > 1f){
-      g.drawImage(i2, x - 70f, y + 20f);
+      g.drawImage(i2, x - 29f - 0.1f*w, y + 12f);
     }
   }
 }

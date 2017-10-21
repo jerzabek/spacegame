@@ -1,5 +1,7 @@
 out/
+lib/
 .idea/
 'space game.iml'
 *.xml
+*/META-INF/
 space game.iml
