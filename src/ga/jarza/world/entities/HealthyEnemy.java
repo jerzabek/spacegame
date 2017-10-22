@@ -7,7 +7,6 @@ public abstract class HealthyEnemy extends Enemy{
 
   public int hp, maxhp = -1;
   public int def, maxdef = -1;
-  public boolean dead = false;
 
   public HealthyEnemy(World world) {
     super(world);

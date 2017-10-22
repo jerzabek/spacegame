@@ -19,7 +19,7 @@ import java.util.List;
 
 public class World {
 
-  private List<Entity> e = new ArrayList<Entity>();
+  public List<Entity> e = new ArrayList<Entity>();
   public GameState bs;
   public boolean debug ;
   public SpriteSheet s, buls;
@@ -45,16 +45,17 @@ public class World {
       a.update(delta);
     }
 
+    if(!spawnBuffer.isEmpty()) {
+      for (Entity a : spawnBuffer) {
+        e.add(a);
+      }
+      spawnBuffer.clear();
+    }
+
     e.removeIf(entity -> {
       boolean res = false;
       if(!entity.getClass().getName().equals(Player.class.getName())) {
-        if (entity.getClass().getSuperclass().getName().equals(HealthyEntity.class.getName())) {
-          res = ((HealthyEntity) entity).dead;
-//          System.out.println("fag 1");
-        } else if (entity.getClass().getSuperclass().getName().equals(HealthyEnemy.class.getName())) {
-          res = ((HealthyEnemy) entity).dead;
-//          System.out.println("fag 2" + res);
-        }
+        res = entity.dead;
       }
 //      System.out.println(entity.getClass().getName() + " & " + HealthyEnemy.class.getClass().getName());
       return res;
@@ -77,5 +78,9 @@ public class World {
         res = ent;
 
     return res;
+  }
+  List<Entity> spawnBuffer = new ArrayList<>();
+  public void spawn(Entity e){
+    spawnBuffer.add(e);
   }
 }

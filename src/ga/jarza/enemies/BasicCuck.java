@@ -2,6 +2,7 @@ package ga.jarza.enemies;
 
 import ga.jarza.main.Main;
 import ga.jarza.world.World;
+import ga.jarza.world.entities.Death;
 import ga.jarza.world.entities.HealthyEnemy;
 import ga.jarza.world.entities.HealthyEntity;
 import org.newdawn.slick.Color;
@@ -14,7 +15,7 @@ public class BasicCuck extends HealthyEnemy {
 
   public BasicCuck(World world) {
     super(world);
-    setMaxHp(10);
+    setMaxHp(1000);
     width = 32f;
     height = 32f;
 //    try {
@@ -31,6 +32,9 @@ public class BasicCuck extends HealthyEnemy {
 
     if(hp < 0){
       dead = true;
+//      world.e.add(new Death(world, x, y));
+//      world.spawn(new Death(world, x, y));
+      System.out.println("yes dead");
     }
   }
 

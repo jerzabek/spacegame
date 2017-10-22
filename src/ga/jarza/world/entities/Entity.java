@@ -7,6 +7,7 @@ public abstract class Entity {
 
   public float x, y, width, height;
   protected World world;
+  public boolean dead;
 
   public Entity(World world) {
     this.world = world;

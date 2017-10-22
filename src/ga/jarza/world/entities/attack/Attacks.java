@@ -30,7 +30,7 @@ public class Attacks {
 
             for(int i = -7; i <= 7; i += 1){
               b.add(new BlastBullet(x, y, world, p, -Math.toRadians(i*5), 25*i*atri));
-              timeSinceUlt = 0;
+//              timeSinceUlt = 0;
             }
           }
         }

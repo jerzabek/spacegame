@@ -3,20 +3,18 @@ package ga.jarza.world.entities;
 import ga.jarza.main.Main;
 import ga.jarza.world.World;
 import ga.jarza.world.entities.attack.Attack;
-import ga.jarza.world.entities.attack.Attacks;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Player extends HealthyEntity{
   public float minf = 0.04f,f = 0.5f, ac = 200f, xv = 0f, yv = 0f;
-  private float ang = 0f;
+  public float ang = 0f;
   private int timeSinceLastShot = 0;
   private int dex;
   private World world;
@@ -121,7 +119,16 @@ public class Player extends HealthyEntity{
     b.removeIf(b -> {
       Entity colHit = world.collisinCheck(b);
       if(colHit != null) {
-        ((HealthyEnemy) colHit).dealDmg(2, true);
+        if (b.getClass().getName().equals(Bullet.class.getName())){
+          ((HealthyEnemy) colHit).dealDmg(2, true);
+          System.out.println("dealing basic");
+          world.spawn(new Death(world, colHit.x + colHit.width/2, colHit.y + colHit.height/2, 200, ang));
+        }else if(b.getClass().getName().equals(BlastBullet.class.getName())) {
+          System.out.println("dealing blast");
+          world.spawn(new Death(world, colHit.x + colHit.width/2, colHit.y + colHit.height/2, 200));
+          ((HealthyEnemy) colHit).dealDmg(1, true);
+        }
+
       }
       return !(new Rectangle(0, 0, Main.getGAME_WIDTH(), Main.getGAME_HEIGHT()).contains(new Point((int)b.x, (int)b.y)))  || (colHit == null ? false : true);
     });
@@ -155,10 +162,11 @@ public class Player extends HealthyEntity{
     g.resetTransform();
     if(world.debug) {
       g.setColor(Color.white);
-      g.drawString(new StringBuilder().append(timeSinceLastShot).append(' ').append('m').append('s').toString(), 10, 32);
-      g.drawString(new StringBuilder().append(new DecimalFormat("##.##").format(bps)).append(' ').append('b').append('p').append('s').toString(), 10, 48);
-      g.drawString(new StringBuilder().append(buls).toString(), 10, 64);
-      g.drawString(new StringBuilder().append(currentShootingSessionLength).append(' ').append('t').append('p').append('a').append('s').append('s').toString(), 10, 80);
+        g.drawString(new StringBuilder().append(new char[] {'n', 'o', ' ', 'd', 'a', 't', 'a', ' ', 't', 'o', ' ', 's', 'h', 'o' , 'w'}).toString(), 10, 32);
+//      g.drawString(new StringBuilder().append(timeSinceLastShot).append(' ').append('m').append('s').toString(), 10, 32);
+//      g.drawString(new StringBuilder().append(new DecimalFormat("##.##").format(bps)).append(' ').append('b').append('p').append('s').toString(), 10, 48);
+//      g.drawString(new StringBuilder().append(buls).toString(), 10, 64);
+//      g.drawString(new StringBuilder().append(currentShootingSessionLength).append(' ').append('t').append('p').append('a').append('s').append('s').toString(), 10, 80);
     }
     for(Entity t : b){
       t.render(g);

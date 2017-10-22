@@ -6,7 +6,6 @@ public abstract class HealthyEntity extends Entity{
 
   public int hp, maxhp = -1;
   public int def, maxdef = -1;
-  public boolean dead;
 
   public HealthyEntity(World world) {
     super(world);
