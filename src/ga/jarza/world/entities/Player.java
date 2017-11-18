@@ -2,30 +2,41 @@ package ga.jarza.world.entities;
 
 import ga.jarza.main.Main;
 import ga.jarza.world.World;
+import ga.jarza.world.entities.abilities.BombTing;
 import ga.jarza.world.entities.attack.Attack;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Transform;
 
+import javax.print.DocFlavor;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Player extends HealthyEntity{
-  public float minf = 0.04f,f = 0.5f, ac = 200f, xv = 0f, yv = 0f;
-  public float ang = 0f;
+  public float minf = 0.04f,f = 0.5f, ac = 200f;
   private int timeSinceLastShot = 0;
   private int dex;
   private World world;
   private Attack ult;
-
+  private Death d;
+  private Image q;
 //  private Image img;
-  private List<Entity> b = new ArrayList<>();
+private List<Entity> b = new ArrayList<>();
 
   public Player(World world){
     super(world);
-    setMaxHp(100);
+    d = new Death(world, x + width/2, y + height/2, -1, -1);
+    world.spawn(d);
+    setMaxHp(200);
+    try {
+      q = new Image("res/explosion/1/5.png", false, Image.FILTER_NEAREST).getScaledCopy(1/8f);
+    } catch (SlickException e) {
+      e.printStackTrace();
+    }
     ult = world.attacks.attacks.get("basic");
     x = 32f;
     y = 32f;
@@ -39,11 +50,17 @@ public class Player extends HealthyEntity{
 //    }
     dex = 200;
 //    timeSinceLastShot = dex;
+
+    col = new Rectangle(x, y, width, height);
+    col.setCenterX(x + width/2);
+    col.setCenterY(y + height/2);
   }
   int buls = 0;
   double bps = 0d;
   int currentShootingSessionLength;
-
+  boolean prevQ;
+  int timeSinceLastQ;
+  int qdex = 2000;
   public void update(int delta) {
     dex = 250;
     if(Keyboard.isKeyDown(Input.KEY_W)){
@@ -74,6 +91,9 @@ public class Player extends HealthyEntity{
     x += xv*delta/1000f;
     y += yv*delta/1000f;
 
+    d.x = x;
+    d.y = y;
+
     xv *= f;
     yv *= f;
 
@@ -102,6 +122,11 @@ public class Player extends HealthyEntity{
       buls = 0;
     }
 
+    if(!prevQ && Keyboard.isKeyDown(Input.KEY_LSHIFT) && timeSinceLastQ > qdex){
+      world.spawn(new BombTing(world, Mouse.getX(), Main.getGAME_HEIGHT() - Mouse.getY(), 70f));
+      timeSinceLastQ = 0;
+    }
+    timeSinceLastQ += delta;
     ult.update(delta, x, y, b, world, this);
 
     timeSinceLastShot += delta;
@@ -121,10 +146,10 @@ public class Player extends HealthyEntity{
       if(colHit != null) {
         if (b.getClass().getName().equals(Bullet.class.getName())){
           ((HealthyEnemy) colHit).dealDmg(2, true);
-          System.out.println("dealing basic");
+//          System.out.println("dealing basic");
           world.spawn(new Death(world, colHit.x + colHit.width/2, colHit.y + colHit.height/2, 200, ang));
         }else if(b.getClass().getName().equals(BlastBullet.class.getName())) {
-          System.out.println("dealing blast");
+//          System.out.println("dealing blast");
           world.spawn(new Death(world, colHit.x + colHit.width/2, colHit.y + colHit.height/2, 200));
           ((HealthyEnemy) colHit).dealDmg(1, true);
         }
@@ -133,9 +158,16 @@ public class Player extends HealthyEntity{
       return !(new Rectangle(0, 0, Main.getGAME_WIDTH(), Main.getGAME_HEIGHT()).contains(new Point((int)b.x, (int)b.y)))  || (colHit == null ? false : true);
     });
 
+
     if(hp < 0){
       dead = true;
     }
+
+    prevQ = Keyboard.isKeyDown(Input.KEY_LSHIFT);
+
+    col.setCenterX(x + width/2);
+    col.setCenterY(y + height/2);
+    col.transform(Transform.createRotateTransform(ang));
   }
 
   public void render(Graphics g) {
@@ -162,7 +194,9 @@ public class Player extends HealthyEntity{
     g.resetTransform();
     if(world.debug) {
       g.setColor(Color.white);
-        g.drawString(new StringBuilder().append(new char[] {'n', 'o', ' ', 'd', 'a', 't', 'a', ' ', 't', 'o', ' ', 's', 'h', 'o' , 'w'}).toString(), 10, 32);
+//        g.drawString(new StringBuilder().append(new char[] {'n', 'o', ' ', 'd', 'a', 't', 'a', ' ', 't', 'o', ' ', 's', 'h', 'o' , 'w'}).toString(), 10, 32);
+        g.drawString(new StringBuilder().append('x').append(':').toString() + Mouse.getX(), 10, 32);
+      g.drawString(new StringBuilder().append('y').append(':').toString() + (Main.getGAME_HEIGHT() - Mouse.getY()), 10, 48);
 //      g.drawString(new StringBuilder().append(timeSinceLastShot).append(' ').append('m').append('s').toString(), 10, 32);
 //      g.drawString(new StringBuilder().append(new DecimalFormat("##.##").format(bps)).append(' ').append('b').append('p').append('s').toString(), 10, 48);
 //      g.drawString(new StringBuilder().append(buls).toString(), 10, 64);
@@ -171,5 +205,19 @@ public class Player extends HealthyEntity{
     for(Entity t : b){
       t.render(g);
     }
+    if(world.debug) {
+      g.setColor(Color.red);
+      g.draw(getCol());
+    }
+
+    g.setColor(Color.green);
+    g.drawRect(200, 10, 200, 10);
+    g.fillRect(200, 10, ((float)hp/maxhp*200 < 0 ? 0 : ((float)hp/maxhp*200 > 200 ? 200 : (float)hp/maxhp*200)), 10);
+    g.setColor(Color.white);
+    g.drawString("HP: " + hp + "/" + maxhp, 410, 12);
+    q.draw(135, 10, new Color(150, 150, 150, 150));
+    int per = (int)(((float)timeSinceLastQ/qdex)*q.getHeight());
+    per = per > q.getHeight() ? q.getHeight() : (per < 0 ? 0 : per);
+    q.draw(135, 10 + q.getHeight() - per, 135 + q.getWidth(), 10 + q.getHeight(), 0, q.getHeight() - per,  q.getWidth(), q.getHeight());
   }
 }

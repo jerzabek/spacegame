@@ -9,29 +9,29 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 
-public class Bullet extends Entity{
+public class NastiBullet extends Entity{
 
   private float xv, yv, ac;
   private int deployTime = 0;
   private Player p;
   private Image img;
 
-  public Bullet(float x, float y, World world, double... delAng){
+  public NastiBullet(float x, float y, World world, double... delAng){
     super(world);
     this.x = x;
     this.y = y;
-    width = 16f;
-    height = 8f;
-    col = new Rectangle(x, y, width, height);
+    width = 32f;
+    height = 18f;
+    col = new Rectangle(x, y, width - 4, height - 4);
     try {
-      img = new Image("res/bul.png");
+      img = new Image("res/bub.png");
     } catch (SlickException e) {
       e.printStackTrace();
     }
     float mx, my, dx, dy;
 
-    mx = Mouse.getX();
-    my = Main.getGAME_HEIGHT() - Mouse.getY();
+    mx = world.player.x;
+    my = world.player.y;
 
     dx = -(x) + mx;
     dy = -(y) + my;
@@ -50,7 +50,7 @@ public class Bullet extends Entity{
     xv = ac * (float) Math.cos(ang);
   }
 
-  public Bullet(float x, float y, World world, Player p, double... delAng){
+  public NastiBullet  (float x, float y, World world, Player p, double... delAng){
     this(x, y, world, delAng);
     this.p = p;
   }
@@ -75,6 +75,8 @@ public class Bullet extends Entity{
       x += xv * delta;
       y += yv * delta;
     }
+
+
     col.setX(x);
     col.setY(y);
   }
@@ -85,8 +87,8 @@ public class Bullet extends Entity{
       g.setColor(Color.red);
       if(world.debug)
         g.draw(getCol());
-//        g.drawRect(x, y, width, height);
-      img.draw(x - width/2, y - img.getHeight()/2 +height/2);
+      //        g.drawRect(x, y, width, height);
+      img.draw(x, y - img.getHeight()/2 +height/2);
       g.resetTransform();
     }
   }

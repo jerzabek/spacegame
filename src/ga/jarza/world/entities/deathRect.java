@@ -10,8 +10,8 @@ public class deathRect extends Entity{
   private double ang, fric, grav;
   private float xv, yv;
   private int life = -1, tim;
-  private boolean isGrav;
-
+  public boolean isGrav;
+  public int dir = 1;
 
   public deathRect(World world, boolean isG, float x, float y, Color col){
     super(world);
@@ -58,7 +58,7 @@ public class deathRect extends Entity{
     grav = 0.75;
     this.ang = (float) ((float) Math.toRadians(ang) * -1 + (-Math.PI/4 + Math.random()*Math.PI/2));
     xv = (float) Math.cos(this.ang)*(19 + (int) Math.random()*12);
-    yv = (float) Math.sin(this.ang)*(19 + (int) Math.random()*12);
+    yv = (float) Math.sin(this.ang)*(19 + (int) Math.random()*12)*dir;
   }
 
   public void update(int delta) {
@@ -68,7 +68,7 @@ public class deathRect extends Entity{
     yv *= fric;
 
     if(isGrav)
-      yv += grav;
+      yv += grav*dir;
 
     tim += delta;
     if(life != -1){

@@ -2,26 +2,29 @@ package ga.jarza.enemies;
 
 import ga.jarza.main.Main;
 import ga.jarza.world.World;
-import ga.jarza.world.entities.*;
+import ga.jarza.world.entities.Death;
+import ga.jarza.world.entities.Entity;
+import ga.jarza.world.entities.HealthyEnemy;
+import ga.jarza.world.entities.Player;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Transform;
 
-public class BasicCuck extends HealthyEnemy {
+public class SemiCuck extends HealthyEnemy {
 
-//  private Image img;
+  //  private Image img;
 
-  public BasicCuck(World world) {
+  public SemiCuck(World world) {
     super(world);
-    setMaxHp(40);
-    width = 32f;
-    height = 32f;
-//    try {
-//      img = new Image("res/basiccuck.png");
-//    } catch (SlickException e) {
-//      e.printStackTrace();
-//    }
+    setMaxHp(120);
+    width = 40f;
+    height = 40f;
+    //    try {
+    //      img = new Image("res/basiccuck.png");
+    //    } catch (SlickException e) {
+    //      e.printStackTrace();
+    //    }
     x = (float) (Main.getGAME_WIDTH()*Math.random());
     y = (float) (Main.getGAME_HEIGHT()*Math.random());
 
@@ -31,20 +34,20 @@ public class BasicCuck extends HealthyEnemy {
   }
 
   private Entity target;
-  float speed = 0.2f;
+  float speed = 0.1f;
   int sinceDmg, dex;
   public void update(int delta) {
-//    ang += 0.5f*delta;
-    dex = 250;
+    //    ang += 0.5f*delta;
+    dex = 25;
     if(hp < 0){
       dead = true;
-//      world.e.add(new Death(world, x, y));
-      world.spawn(new Death(world, x, y, 250));
+      //      world.e.add(new Death(world, x, y));
+      world.spawn(new Death(world, x, y, 500));
     }
 
     for(Entity a : world.e){
       if(a.getClass().equals(Player.class)){
-        if(Math.sqrt(Math.pow((a.x - x), 2) + Math.pow((a.y - y), 2)) < 190){
+        if(Math.sqrt(Math.pow((a.x - x), 2) + Math.pow((a.y - y), 2)) < 750f){
           target = a;
         }
         break;
@@ -62,7 +65,7 @@ public class BasicCuck extends HealthyEnemy {
 
       ang = (float) (Math.atan2(dy, dx));
 
-      if(Math.sqrt(dx*dx + dy*dy) > 200){
+      if(Math.sqrt(dx*dx + dy*dy) > 740){
         target = null;
 
       }else {
@@ -81,10 +84,10 @@ public class BasicCuck extends HealthyEnemy {
       xv = 0;
       yv = 0;
     }
-//      if(Math.random() > 0.1d){
-//        x += xv*delta;
-//        y += yv*delta;
-//      }
+      //      if(Math.random() > 0.1d){
+      //        x += xv*delta;
+      //        y += yv*delta;
+      //      }
     }
     x += xv*delta;
     y += yv*delta;
@@ -107,25 +110,25 @@ public class BasicCuck extends HealthyEnemy {
     col.transform(Transform.createRotateTransform(ang));
     sinceDmg += delta;
     if(world.player.getCol().intersects(getCol()) && sinceDmg > dex){
-      world.player.dealDmg(5, false);
+      world.player.dealDmg(1, false);
       sinceDmg = 0;
     }
   }
 
   public void render(Graphics g) {
-//    float mx, my, dx, dy;
-//
-//    mx = Mouse.getX();
-//    my = Main.getGAME_HEIGHT() - Mouse.getY();
-//
-//    dx = (x + 16f) - mx;
-//    dy = (y + 16f) - my;
+    //    float mx, my, dx, dy;
+    //
+    //    mx = Mouse.getX();
+    //    my = Main.getGAME_HEIGHT() - Mouse.getY();
+    //
+    //    dx = (x + 16f) - mx;
+    //    dy = (y + 16f) - my;
 
-//    ang = (float) Math.toDegrees((Math.atan2(dy, dx))) - 90f;
+    //    ang = (float) Math.toDegrees((Math.atan2(dy, dx))) - 90f;
 
-//    g.rotate(x + img.getWidth()/2, y + img.getHeight()/2, ang);
-//    g.drawImage(img, x, y);
-    g.setColor(new Color(((float) hp)/maxhp, 0.1f, 0.2f));
+    //    g.rotate(x + img.getWidth()/2, y + img.getHeight()/2, ang);
+    //    g.drawImage(img, x, y);
+    g.setColor(new Color(((float) hp)/maxhp, 0.8f, 0.1f));
     g.fillRect(x, y, width, height);
     if(world.debug) {
       g.setColor(Color.red);

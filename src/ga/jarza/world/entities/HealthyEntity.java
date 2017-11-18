@@ -15,6 +15,7 @@ public abstract class HealthyEntity extends Entity{
 
   public void setMaxHp(int hp){
     this.maxhp = hp;
+    this.hp = hp;
   }
 
   public void setMaxDef(int def){
